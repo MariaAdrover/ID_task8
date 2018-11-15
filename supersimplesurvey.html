@@ -1,0 +1,199 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>jQuery UI - Super Simple Survey</title>
+  <meta charset="utf-8">
+  <!--jQuery-->
+  <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+    crossorigin="anonymous"></script>
+  <!--jQuery UI-->
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+    crossorigin="anonymous"></script>
+  <!-- IMPORTANT: Check normalize.css official doc: https://necolas.github.io/normalize.css/ -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css">
+
+  <style>
+    body {
+        margin: 20px;
+      }
+      #name_input {
+        float: left;
+        margin-bottom: 20px;
+        margin-right: 20px;
+      }
+      #date_input {
+        float: left;
+        margin-bottom: 20px;
+      }
+      #year_input {
+        clear:both;
+      }
+      .rank_color {
+        width: 20px;
+        margin-top: 2px;
+      }
+      /* Selectable elements*/
+      #selectable .ui-selecting {
+        background: #FECA40;
+      }
+      #selectable .ui-selected {
+        background: #F39814; 
+        color: white;
+      }
+      #selectable li:before {
+        content: "\2713 ";
+        color: transparent;
+      }
+      #selectable li.ui-selecting:before {
+        content: "\2713 ";
+        color: black;
+      }
+      #selectable li.ui-selected:before {
+        content: "\2713 ";
+        color: white;
+      }
+      #selectable {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        width: 150px;
+        cursor: pointer;
+      }
+      #selectable li {
+        margin: 3px;
+        padding: 0.4em;
+        font-size: 1.0em;
+        height: 16px;
+      }
+      /*Sortable elements*/
+      #sortable {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        width: 150px;
+      }
+      #sortable li {
+        margin: 0 3px 3px 3px;
+        padding: 0.4em;
+        padding-left: 1.5em;
+        font-size: 1.0em;
+        height: 12px;
+      }
+      /*Sortable Icons*/
+      #sortable li span {
+        position: absolute;
+        margin-left: -1.3em;
+      }
+      /*Tooltips CSS*/
+      .color_swatch{
+        height: 50px;
+        width: 50px;
+      }
+
+    </style>
+
+  <script>
+    $(document).ready(function () {
+
+      //Datepicker inizialization using specified dates as minimum and maximum
+      $("#date").datepicker({ minDate: (new Date(2018, 8, 1)), maxDate: (new Date(2018, 9, 15)) });
+
+      /* Selectable inicialized over element with #selectable id */
+      $("#selectable").selectable();
+
+      /* Sortable inicialized over element with #sortable id */
+      $("#sortable").sortable();
+      $("#sortable").disableSelection(); // User can't select text accidentally
+
+      /* Step 4: Your js code goes here */
+      $(document).tooltip({
+        /* The items that will have tooltips:
+           the ones that have title and class attributes.
+        */
+        items: "[title], [class]",
+        /* The content of the tooltip will be determined by a function */
+        content: function() {
+            var element = $(this);
+
+            /* Content depends on the element that triggered the event */
+            if (element.is("[title]")){ // Event triggered by an element with the attribute title
+              return element.attr("title");
+            }
+
+            // Event triggered by an element with the attribute class        
+            if (element.is("[class]")){
+              // We test if the element is one of the sortable elements list
+              if (element.parent().attr("id")=="sortable") {
+                  var text = element.text(); // Will be the code of the color
+                  return "<div class='color_swatch' style='background:" + text + "'></div>";
+              }
+            }
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <h2>jQuery UI - Super Simple Survey</h2>
+  <h3>General Information</h3>
+  <div id="name_input">
+    <label for="name">Name:</label>
+    <!-- Title added to enable tooltips (content in title attribute) -->
+    <input type="text" id="name" title="Write your name here">
+  </div>
+  <div id="date_input">
+    <label for="date"> Enrollment Date:</label>
+    <!-- This element has a datepicker widget assigned -->
+    <input type="text" id="date">
+  </div>
+  <div id="year_input">
+    <h3>Are you enrolled in DAM or DAW?</h3>
+
+    <!-- Old code, before selectable buttons -->
+    <!--
+    <input type="radio" name="enroll_year" id="ugrad" value="ugrad">
+    <label for="ugrad">DAM (taking Interface Development)</label><br>
+    <input type="radio" name="enroll_year" id="grad" value="grad">
+    <label for="grad">DAW (taking Interface Web Development)</label>
+    -->
+
+    <!--Selectable buttons with tooltips (content in title attribute) -->
+    <ol id="selectable">
+      <li class="ui-widget-content" title="taking Interface Development">DAM</li>
+      <li class="ui-widget-content" title="taking Interface Web Development">DAW</li>
+    </ol>
+  </div>
+
+  <div id="color_input">
+    <!-- Old code, before we add sortable elements -->
+    <!-- <h3>Rank the colors listed from your most favorite (1)
+      to your least favorite (5). Be sure to only use each ranking once.</h3> -->
+    <!-- <input type="text" class="rank_color" id="red">
+    <label for="red">#ff0000</label><br />
+    <input type="text" class="rank_color" id="blue">
+    <label for="blue">#0000ff</label><br />
+    <input type="text" class="rank_color" id="hot_pink">
+    <label for="hot_pink">#ff00b3</label><br />
+    <input type="text" class="rank_color" id="mustard">
+    <label for="mustard">#ded447</label><br />
+    <input type="text" class="rank_color" id="dark_green">
+    <label for="dark_green">#125e18</label><br /> -->
+
+    <!--  sortable elements -->    
+	  <h3>Rank the colors from your most favorite to your least favorite:</h3>
+     
+    <ul id="sortable">
+      <li class="ui-state-default"><span class="ui-icon ui-icon-caret-2-n-s"></span>#ff0000</li>
+      <li class="ui-state-default"><span class="ui-icon ui-icon-caret-2-n-s"></span>#0000ff</li>
+      <li class="ui-state-default"><span class="ui-icon ui-icon-caret-2-n-s"></span>#ff00b3</li>
+      <li class="ui-state-default"><span class="ui-icon ui-icon-caret-2-n-s"></span>#ded447</li>
+      <li class="ui-state-default"><span class="ui-icon ui-icon-caret-2-n-s"></span>#125e18</li>
+    </ul>
+  </div>
+
+</body>
+
+</html>
